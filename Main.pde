@@ -22,7 +22,7 @@ void setup() {
     
   }
   
-  float[] r = {1,0};
+  float[] r = {0,0};
   float[] result = brain.feedForward(r);
   
   for(int i=0; i<result.length; i++){
@@ -36,6 +36,24 @@ void setup() {
   
   for(int i=0; i<result1.length; i++){
     print(result1[i]);
+  }
+  
+    println();
+  
+  float[] r11 = {0,1};
+  float[] result11 = brain.feedForward(r11);
+  
+  for(int i=0; i<result11.length; i++){
+    print(result11[i]);
+  }
+  
+      println();
+  
+  float[] r111 = {1,0};
+  float[] result111 = brain.feedForward(r111);
+  
+  for(int i=0; i<result111.length; i++){
+    print(result111[i]);
   }
   
 }
