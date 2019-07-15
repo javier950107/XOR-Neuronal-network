@@ -20,9 +20,9 @@ class NeuronalNetwork{
     wih.randomize();
     who.randomize();
     
-    biasH = new Matrix(hidden, 1);
+    biasH = new Matrix(hidden, 1); //create matrix bias
     biasH.randomize(); //get random values
-    biasO = new Matrix(outputs, 1);
+    biasO = new Matrix(outputs, 1); //create matrix bias
     biasO.randomize(); //get random values
     learningRate = 0.1;
     
@@ -45,5 +45,54 @@ class NeuronalNetwork{
     
     //return value
     return resultHiddenOutputs.toArray(); 
+  }
+   
+  //Train function using backpropagation
+  void train(float[] inputs, float[]target){
+    //convert array to matrix
+    Matrix inputM = wih.matrixFromArray(inputs);
+    Matrix targetM = wih.matrixFromArray(target);
+    //feedForward and get the output
+    
+    //multiply weights, first step
+    Matrix resultInputHidden = wih.multiply(inputM);
+    resultInputHidden.add(biasH); //result + bias
+    resultInputHidden.addSigmoid(); //result/1-e^result
+    
+    //second step
+    Matrix output = who.multiply(resultInputHidden);
+    output.add(biasO);
+    output.addSigmoid();
+    
+    //Target - Outputs
+    Matrix outputError = targetM.substract(output);
+    
+    //Get gradient ouput to hidden
+    Matrix gradientOH = output.derivateFunction();
+    gradientOH.getGradient(outputError,learningRate); // gradient * outputError * learning Rate = New value
+    
+    //Calculate Deltas
+    Matrix hiddenTranspose = resultInputHidden.transpose();
+    Matrix weightsHODeltas = gradientOH.multiply(hiddenTranspose);
+    
+    //adjust weights hidden - outputs and bias
+    who.add(weightsHODeltas);
+    biasO.add(gradientOH);
+    
+    //calculare Error
+    Matrix whoTranspose = who.transpose();
+    Matrix hiddenError = whoTranspose.multiply(outputError);
+    
+    //gradient hidden to input
+    Matrix gradientHI = resultInputHidden.derivateFunction();
+    gradientHI.getGradient(hiddenError,learningRate); // gradient * outputError * learning Rate = New value
+    
+    //Calculate deltas
+    Matrix inputTranspose = inputM.transpose();
+    Matrix weightsIHDeltas = gradientHI.multiply(inputTranspose);
+    
+    //adjust weights input hidden
+    wih.add(weightsIHDeltas);
+    biasH.add(gradientHI);
   }
 }
