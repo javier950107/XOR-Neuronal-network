@@ -88,12 +88,14 @@ class Matrix{
   * [2] - [2] = [0]
   * [2] - [2] = [0]
   */
-  void substract(Matrix n){
+  Matrix substract(Matrix n){
+    Matrix result = new Matrix(rows, cols);
     for(int i=0; i<rows; i++){
       for(int j=0; j<cols; j++){
-        matrix[i][j] -= n.matrix[i][j];
+        result.matrix[i][j] = matrix[i][j] - n.matrix[i][j];
       }
     }
+    return result;
   }
   
   /**
@@ -120,6 +122,34 @@ class Matrix{
     return trans;
   }
   
+  //Get gradient using sigmoid derivated
+  Matrix derivateFunction(){
+    Matrix result = new Matrix(rows, cols);
+    for(int i=0; i<rows; i++){
+      for(int j=0; j<cols; j++){
+        result.matrix[i][j] = dsigmoid(matrix[i][j]);
+      }
+    }
+    return result;
+  }
+  
+  //multiply each value by learning rate
+  void multiplyLearningRate(float n){
+    for(int i=0; i<rows; i++){
+      for(int j=0; j<cols; j++){
+        matrix[i][j] *= n;
+      }
+    }
+  }
+  
+  void getGradient(Matrix output, float learningRate){
+    for(int i=0; i<rows; i++){
+      for(int j=0; j<cols; j++){
+        matrix[i][j] *= output.matrix[i][j] * learningRate;
+      }
+    }
+  }
+  
   /* Sigmoid
        1
     -------
@@ -127,6 +157,13 @@ class Matrix{
   */ 
   float sigmoid(float x){
      return 1 / (1 + exp(-x));
+  }
+  
+  /*
+  * sigmoid derivate
+  */
+  float dsigmoid(float y){
+    return y*(1-y);
   }
 
 }
